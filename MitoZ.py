@@ -285,8 +285,7 @@ search_and_annot_mito_parser.add_argument("--genetic_code", metavar="<INT>",
 '--clade' option. [%(default)s]''')
 
 search_and_annot_mito_parser.add_argument("--clade", default="Arthropoda",
-	choices=["Chordata", "Arthropoda"],
-	# "Echinodermata", "Annelida-segmented-worms", "Bryozoa", "Mollusca", "Nematoda", "Nemertea-ribbon-worms", "Porifera-sponges"],
+	choices=["Chordata", "Arthropoda", "Echinodermata", "Annelida-segmented-worms", "Bryozoa", "Mollusca", "Nematoda", "Nemertea-ribbon-worms", "Porifera-sponges"],
 	help="which clade does your species belong to? [%(default)s]")
 
 
