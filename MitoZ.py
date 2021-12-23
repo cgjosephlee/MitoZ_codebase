@@ -1946,9 +1946,9 @@ def annotate(bin_annotate_dir=None, annotate_wdir=None, mitoscaf_file=None, MT_a
 
 	command += 'cp visualization/circos.png {dest}/{prefix}.circos.png\n'.format(dest=result_wdir, prefix=prefix)
 
-	command += 'cp visualization/circos.karyotype.txt {dest}/{prefix}.circos.karyotype.txt\n'.format(dest=result_wdir, prefix=prefix)
+	# command += 'cp visualization/circos.karyotype.txt {dest}/{prefix}.circos.karyotype.txt\n'.format(dest=result_wdir, prefix=prefix)
 
-	command += 'cp visualization/circos.dep {dest}/{prefix}.circos.dep\n'.format(dest=result_wdir, prefix=prefix)
+	# command += 'cp visualization/circos.dep {dest}/{prefix}.circos.dep\n'.format(dest=result_wdir, prefix=prefix)
 
 	runcmd(command)
 
