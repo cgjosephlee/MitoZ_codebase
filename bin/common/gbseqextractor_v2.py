@@ -140,18 +140,18 @@ def main():
 				wholeseq_idline += rec.id
 
 			if args.l:
-				wholeseq_idline += ";len="+str(len(rec))
+				wholeseq_idline += " len="+str(len(rec))
 
 			if args.s:
 				species = str(rec.annotations['organism'])
-				wholeseq_idline += ";" + species
+				wholeseq_idline += " " + species
 
 			if args.t:
 				taxonomy = str(rec.annotations['taxonomy'])
 				taxonomy = taxonomy.replace("'", "")
-				wholeseq_idline += ";"+ taxonomy
+				wholeseq_idline += " "+ taxonomy
 
-			wholeseq_idline += ";topology={0}".format(rec.annotations['topology'])
+			wholeseq_idline += " topology={0}".format(rec.annotations['topology'])
 
 			print(wholeseq_idline, file=fh_wholeseq)
 			print(rec.seq, file=fh_wholeseq)
