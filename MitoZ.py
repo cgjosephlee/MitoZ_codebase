@@ -1890,6 +1890,7 @@ def annotate(bin_annotate_dir=None, annotate_wdir=None, mitoscaf_file=None, MT_a
 	runcmd(command)
 	# gene sequence files
 	cds_file = prefix + '.cds'
+	prot_file = prefix + '.prot'
 	trna_file = prefix + '.trna'
 	rrna_file = prefix + '.rrna'
 	control_region_file = prefix + '.misc_feature'
@@ -1898,7 +1899,7 @@ def annotate(bin_annotate_dir=None, annotate_wdir=None, mitoscaf_file=None, MT_a
 	# gather_result(fsa_file, cds_position, cds_position_revised, annotation_infile_cdsft, annotation_infile_trnaft, s_rRNA_ft,
 	#	l_rRNA_ft, tbl_file)
 
-	gather_result(tbl_file, 'summary.txt', cds_file, trna_file, rrna_file, control_region_file, whole_mt_file)
+	gather_result(tbl_file, 'summary.txt', cds_file, prot_file, trna_file, rrna_file, control_region_file, whole_mt_file)
 
 
 	tbl2asn_tbl = annotation_infile + ".tbl"

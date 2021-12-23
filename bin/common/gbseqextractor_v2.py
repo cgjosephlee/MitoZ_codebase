@@ -100,9 +100,10 @@ def to_1_leftmost(pos=None):
 def main():
 	args = get_para()
 
-	fh_cds = fh_rrna = fh_trrna = fh_wholeseq = ""
+	fh_cds = fh_prot = fh_rrna = fh_trrna = fh_misc = fh_wholeseq = ""
 	if "CDS" in args.types:
 		fh_cds = open(args.prefix+".cds", 'w')
+		fh_prot = open(args.prefix+".prot", 'w')
 
 	if "rRNA" in args.types:
 		fh_rrna = open(args.prefix+".rrna", 'w')
@@ -238,9 +239,15 @@ def main():
 					if strand == -1:
 						gene_seq = gene_seq.reverse_complement()
 
+				prot_seq = ''
+				if 'translation' in fea.qualifiers:
+					prot_seq = fea.qualifiers['translation'][0]
+
 				if fea.type == "CDS":
 					print(idline, file=fh_cds)
 					print(gene_seq, file=fh_cds)
+					print(idline, file=fh_prot)
+					print(prot_seq, file=fh_prot)
 				elif fea.type == "rRNA":
 					print(idline, file=fh_rrna)
 					print(gene_seq, file=fh_rrna)
@@ -254,6 +261,7 @@ def main():
 
 	if fh_cds:
 		fh_cds.close()
+		fh_prot.close()
 
 	if fh_rrna:
 		fh_rrna.close()
