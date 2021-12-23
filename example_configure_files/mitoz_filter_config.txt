@@ -34,6 +34,11 @@ fastq_quality_shift =
 # It must be >= 71 bp
 fastq_read_length = 150
 
+# use only part (# Gbp) of the input fastq file in the
+# analysis. By default, all data will be used.
+# Support for all, all2, filter, assemble and findmitoscaf only.
+fq_size =
+
 ########################
 # Filter arguments
 

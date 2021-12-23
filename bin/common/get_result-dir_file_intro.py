@@ -23,6 +23,7 @@ def get_file_intro(result_dir=None):
     tbl2asn_val = []
 
     circos_image = []
+    depth_files = []
 
     # gene sequences
     cds_file = ''
@@ -67,6 +68,9 @@ def get_file_intro(result_dir=None):
 
         elif re.search(r'circos\.(png|svg)', f):
             circos_image.append(f)
+
+        elif re.search(r'circos\.dep', f) or re.search(r'circos\.karyotype\.txt', f):
+            depth_files.append(f)
 
         elif re.search(r'\.trna', f):
             trna_file = f
@@ -162,6 +166,16 @@ File:
 File:
 {0}
 '''.format('\n'.join(circos_image), out_item=out_item)
+
+    if len(depth_files) > 0:
+        out_item += 1
+        output += '''
+- {out_item}. The sequencing depth of each site of the mitochondrial genome,
+and the sequence id relationships.
+File:
+{0}
+'''.format('\n'.join(depth_files), out_item=out_item)
+
 
     if tbl2asn_sqn:
         out_item += 1

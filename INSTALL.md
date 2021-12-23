@@ -18,7 +18,7 @@ See [https://www.sylabs.io/docs/](https://www.sylabs.io/docs/) for instructions 
 
 ## 1.2 Download the MitoZ container
 
-    $ singularity pull  --name MitoZ.simg shub://linzhi2013/MitoZ:v2.3
+    $ singularity pull  --name MitoZ.simg shub://linzhi2013/MitoZ:v2.4-alpha
 
 For China users, it can be difficult to pull the Singularity container from https://www.singularity-hub.org/
 for known network problem, you can download the containers from https://pan.genomics.cn/ucdisk/s/uMFvum.
@@ -35,11 +35,11 @@ In the host, run
 
 In the container, run
 
-    $ /app/anaconda/bin/python3 /app/release_MitoZ_v2.3/MitoZ.py -h
+    $ /app/anaconda/bin/python3 /app/release_MitoZ_v2.4-alpha/MitoZ.py -h
 
-some useful scripts are in `/app/release_MitoZ_v2.3/useful_scripts`
+some useful scripts are in `/app/release_MitoZ_v2.4-alpha/useful_scripts`
 
-    $ ls -lhrt /app/release_MitoZ_v2.3/useful_scripts
+    $ ls -lhrt /app/release_MitoZ_v2.4-alpha/useful_scripts
 
 To learn more about how to use Singularity, please refer to https://www.sylabs.io/docs/.
 
@@ -52,22 +52,22 @@ Please refer to https://docs.docker.com/.
 
 ## 2.2 Download the MitoZ container
 
-    $ docker pull guanliangmeng/mitoz:2.3
+    $ docker pull guanliangmeng/mitoz:2.4-alpha
 
 ## 2.3 Run the container
 
 In your working directory (the fastq files should be in there),
 shell into the container:
 
-    $ sudo docker run -v $PWD:/project --rm -it guanliangmeng/mitoz:2.3
+    $ sudo docker run -v $PWD:/project --rm -it guanliangmeng/mitoz:2.4-alpha
 
 In the container,
 
-    $ python3 /app/release_MitoZ_v2.3/MitoZ.py
+    $ python3 /app/release_MitoZ_v2.4-alpha/MitoZ.py
 
-some useful scripts are in `/app/release_MitoZ_v2.3/useful_scripts`
+some useful scripts are in `/app/release_MitoZ_v2.4-alpha/useful_scripts`
 
-    $ ls -lhrt /app/release_MitoZ_v2.3/useful_scripts
+    $ ls -lhrt /app/release_MitoZ_v2.4-alpha/useful_scripts
 
 
 To learn more about the Docker usage, please go to https://docs.docker.com/.
@@ -128,15 +128,24 @@ In the terminal, type `python3` then `Enter`, you will be into the Python intera
     ncbi = NCBITaxa()
     ncbi.update_taxonomy_database()
 
+If your connection to NCBI is unstable, you can download the `taxdump.tar.gz` file by yourself:
+
+    wget -c http://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz
+
+Then try following:
+
+    from ete3 import NCBITaxa
+    NCBITaxa(taxdump_file='/path/to/taxdump.tar.gz')
+
 For more details, please refer to http://etetoolkit.org/docs/latest/tutorial/tutorial_ncbitaxonomy.html
 
 
 ## 3.6 Download the MitoZ package
 
-Download from `https://github.com/linzhi2013/MitoZ/tree/master/version_2.2`.
+Download from `https://github.com/linzhi2013/MitoZ/tree/master/version_2.4-alpha`.
 
-    $ tar -jxvf release_MitoZ_v2.2.tar.bz2
-    $ cd release_MitoZ_v2.2
+    $ tar -jxvf release_MitoZ_v2.4-alpha.tar.bz2
+    $ cd release_MitoZ_v2.4-alpha
     $ python3 MitoZ.py
 
 ## 3.7 Important: make sure you are in the `mitozEnv` environment when you run MitoZ!

@@ -66,8 +66,8 @@ Seqdesc ::= pub {
           }
         }
       },
-      title "an automatic mitochondrial assembly-annotation-visualization
- pipeline with NGS data"
+      title "MitoZ: a toolkit for animal mitochondrial genome assembly,
+annotation and visualization; doi: https://doi.org/10.1093/nar/gkz173"
     }
   }
 }

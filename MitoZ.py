@@ -147,6 +147,9 @@ fastq_group.add_argument("--fastq_read_length", metavar="<INT>", default='150',
 	help='''read length of fastq reads, used by SOAPTrans and bwa.
 It must be >= 71 bp [%(default)s]''')
 
+fastq_group.add_argument("--fq_size", metavar="<float>", default=5, type=float,
+	help="use only part (# Gbp) of the input fastq file in the analysis. Generally, 2~7 G data should be enough, using more data may only consume more memory. Support for all, all2, filter, assemble and findmitoscaf [%(default)s]")
+
 
 # fasta file group
 fastafile_parser = argparse.ArgumentParser(add_help=False,
@@ -217,6 +220,11 @@ assembly_group.add_argument("--run_mode", type=int,
 	metavar="<INT>", default=2, choices=[2, 3],
 	help='2 for quick_mode, 3 for multi-kmer mode [%(default)s]')
 
+assembly_group.add_argument('--missing_PCGs', metavar='gene', nargs='*',
+	help='''when use '--run_mode 3', you MUST provide the missing
+protein coding genes names, they could be:
+ATP6 ATP8 COX1 COX2 COX3 CYTB ND1 ND2 ND3 ND4 ND4L ND5 ND6''')
+
 assembly_group.add_argument('--quick_mode_seq_file', metavar='[file]',
 	default='',
 	help='''when use '--run_mode 3', you should provide the fasta sequences
@@ -227,10 +235,6 @@ assembly_group.add_argument('--quick_mode_fa_genes_file', metavar='[file]',
 	help='''when use '--quick_mode_seq_file', you should also provide the
 protein coding genes names for each fasta sequence. per-line format:
 seqid gene1 gene2''')
-
-assembly_group.add_argument('--missing_PCGs', metavar='gene', nargs='*',
-	help='''when use '--run_mode 3', you should also provide the missing
-protein coding genes names''')
 
 assembly_group.add_argument('--quick_mode_score_file', metavar='[file]',
 	default='',
@@ -314,17 +318,17 @@ annotation_group.add_argument("--species_name", metavar="<STR>",
 description = """
 Description
 
-	MitoZ - A toolkit for mitochondrial genome assembly,
-        annotation and visualization
+	MitoZ - A toolkit for animal mitochondrial genome assembly,
+annotation and visualization
 
 Version
-	2.3
+	2.4
 
 Citation
 
 Guanliang Meng, Yiyuan Li, Chentao Yang, Shanlin Liu.
-MitoZ: A toolkit for mitochondrial genome assembly, annotation
-and visualization; doi: https://doi.org/10.1101/489955
+MitoZ: a toolkit for animal mitochondrial genome assembly,
+annotation and visualization; doi: https://doi.org/10.1093/nar/gkz173
 """
 
 
@@ -486,6 +490,7 @@ bin_common_dir = os.path.join(bin_dir, "common")
 bin_profiles_dir = os.path.join(bin_dir, "profiles")
 bin_visualize_dir = os.path.join(bin_dir, 'visualize')
 
+
 ## import module
 sys.path.append(bin_visualize_dir)
 import MitoZ_visualize
@@ -514,11 +519,13 @@ else:
 	args = parser.parse_args()
 
 ## directory will create
-if os.path.exists('tmp'):
-	sys.exit('tmp directory exists, please remove it firstly!')
-os.mkdir('tmp')
+workdir_tmp = args.outprefix + '.tmp'
+if os.path.exists(workdir_tmp):
+	sys.exit('{0} directory exists, please remove it firstly!'.format(workdir_tmp))
+os.mkdir(workdir_tmp)
 
-work_dir_tmp = os.path.join(work_dir, 'tmp')
+work_dir_tmp = os.path.join(work_dir, workdir_tmp)
+partial_fastq_wdir = os.path.join(work_dir_tmp, args.outprefix + ".partial_fastq")
 clean_data_wdir = os.path.join(work_dir_tmp, args.outprefix + ".cleandata")
 assemble_wdir = os.path.join(work_dir_tmp, args.outprefix + ".assembly")
 # created if needed
@@ -571,6 +578,31 @@ def abspath(*files):
 		return flist[:]
 	else:
 		return flist[0]
+
+def runcmd(command):
+	try:
+		current_time = time.strftime("%Y-%m-%d %H:%M:%S",
+						time.localtime(time.time()))
+		print(current_time, "\n", command, "\n", sep="", flush=True)
+		subprocess.check_call(command, shell=True)
+	except:
+		sys.exit("Error occured when running command:\n%s" % command)
+
+def runcmd2(command):
+	try:
+		current_time = time.strftime("%Y-%m-%d %H:%M:%S",
+						time.localtime(time.time()))
+		print(current_time, "\n", command, "\n", sep="", flush=True)
+		subprocess.call(command, shell=True)
+	except:
+		sys.exit("Error occured when running command:\n%s" % command)
+
+
+def pre_del_cmd(prefix=None, filestr=None):
+	file_list = [prefix + '*' + j for j in filestr.split()]
+	file_list = " ".join(file_list)
+	command = "rm -rf " + file_list
+	return command
 
 
 soaptrans = os.path.join(bin_assemble_dir, "mitoAssemble")
@@ -711,6 +743,50 @@ if errors_found > 0:
 	parser.exit("Errors found! Exit!")
 
 
+# extract only part of fastq data for the whole analysis
+# should update the args variable for the fastq file path
+# the script should support for single end data: extractfq.py
+
+if hasattr(args, "fq_size") and args.fq_size>0 :
+	os.mkdir(partial_fastq_wdir)
+	soft = os.path.join(bin_common_dir, "extractfq.py")
+	outfq1 = os.path.join(partial_fastq_wdir, 'partial.1.fq.gz')
+	outfq2 = os.path.join(partial_fastq_wdir, 'partial.2.fq.gz')
+
+	# the order is important
+	if args.fastq1 and os.path.isfile(args.fastq1) and args.fastq2 and os.path.isfile(args.fastq2):
+		command = python3 + " " + soft +\
+			" -fq1 " + args.fastq1 +\
+			" -fq2 " + args.fastq2 +\
+			" -outfq1 " + outfq1 +\
+			" -outfq2 " + outfq2 +\
+			" -size_required " + str(args.fq_size)  +\
+			" -gz "  +\
+			" -cache_num 1500000 "
+		runcmd(command)
+		args.fastq1 = outfq1
+		args.fastq2 = outfq2
+
+	elif args.fastq1 and os.path.isfile(args.fastq1):
+		command = python3 + " " + soft +\
+			" -fq1 " + args.fastq1 +\
+			" -outfq1 " + outfq1 +\
+			" -size_required " + str(args.fq_size)  +\
+			" -gz "  +\
+			" -cache_num 1500000 "
+		runcmd(command)
+		args.fastq1 = outfq1
+
+	elif args.fastq2 and os.path.isfile(args.fastq2):
+		command = python3 + " " + soft +\
+			" -fq1 " + args.fastq2 +\
+			" -outfq1 " + outfq2 +\
+			" -size_required " + str(args.fq_size)  +\
+			" -gz "  +\
+			" -cache_num 1500000 "
+		runcmd(command)
+		args.fastq2 = outfq2
+
 ###############################################################################
 #####---------------------------- filter ---------------------------------#####
 
@@ -842,7 +918,7 @@ def assemble(assemble_wdir=None, assemble_wdir2=None, bin_assemble_dir=None, bin
 
 	elif run_mode == 3:
 		# multi-kmer mode
-		if len(missing_PCGs) < 1:
+		if not missing_PCGs or len(missing_PCGs) < 1:
 			sys.exit("you must set '--missing_PCGs' when use '--run_mode 3' !")
 
 		os.mkdir(assemble_wdir2)
@@ -1860,10 +1936,20 @@ def annotate(bin_annotate_dir=None, annotate_wdir=None, mitoscaf_file=None, MT_a
 
 	command = "cp " + tbl2asn_gbf +\
 			" " + tbl2asn_sqn +\
-			" " + tbl2asn_val +\
-			" errorsummary.val visualization/circos.svg visualization/circos.png "
+			" " + tbl2asn_val + ' ' + result_wdir
 
-	command += " " + result_wdir
+	runcmd(command)
+
+	command = 'cp errorsummary.val {dest}/{prefix}.errorsummary.val\n'.format(dest=result_wdir, prefix=prefix)
+
+	command += 'cp visualization/circos.svg {dest}/{prefix}.circos.svg\n'.format(dest=result_wdir, prefix=prefix)
+
+	command += 'cp visualization/circos.png {dest}/{prefix}.circos.png\n'.format(dest=result_wdir, prefix=prefix)
+
+	command += 'cp visualization/circos.karyotype.txt {dest}/{prefix}.circos.karyotype.txt\n'.format(dest=result_wdir, prefix=prefix)
+
+	command += 'cp visualization/circos.dep {dest}/{prefix}.circos.dep\n'.format(dest=result_wdir, prefix=prefix)
+
 	runcmd(command)
 
 
@@ -1909,30 +1995,6 @@ def gather_result(*files):
 	runcmd(command)
 
 
-def runcmd(command):
-	try:
-		current_time = time.strftime("%Y-%m-%d %H:%M:%S",
-						time.localtime(time.time()))
-		print(current_time, "\n", command, "\n", sep="", flush=True)
-		subprocess.check_call(command, shell=True)
-	except:
-		sys.exit("Error occured when running command:\n%s" % command)
-
-def runcmd2(command):
-	try:
-		current_time = time.strftime("%Y-%m-%d %H:%M:%S",
-						time.localtime(time.time()))
-		print(current_time, "\n", command, "\n", sep="", flush=True)
-		subprocess.call(command, shell=True)
-	except:
-		sys.exit("Error occured when running command:\n%s" % command)
-
-
-def pre_del_cmd(prefix=None, filestr=None):
-	file_list = [prefix + '*' + j for j in filestr.split()]
-	file_list = " ".join(file_list)
-	command = "rm -rf " + file_list
-	return command
 
 ###############################################################################
 ###############################################################################

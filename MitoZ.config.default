@@ -46,6 +46,11 @@ fastq_quality_shift =
 # It must be >= 71 bp
 fastq_read_length = 150
 
+# use only part (# Gbp) of the input fastq file in the
+# analysis. By default, all data will be used.
+# Support for all, all2, filter, assemble and findmitoscaf only.
+fq_size = 5
+
 ######################
 # Assembly arguments
 
@@ -149,6 +154,11 @@ fastq_quality_shift =
 # read length of fastq reads, used by SOAPTrans and bwa.
 # It must be >= 71 bp
 fastq_read_length = 150
+
+# use only part (# Gbp) of the input fastq file in the
+# analysis. By default, all data will be used.
+# Support for all, all2, filter, assemble and findmitoscaf only.
+fq_size = 5
 
 ######################
 # Filter arguments
@@ -286,6 +296,11 @@ fastq_quality_shift =
 # It must be >= 71 bp
 fastq_read_length = 150
 
+# use only part (# Gbp) of the input fastq file in the
+# analysis. By default, all data will be used.
+# Support for all, all2, filter, assemble and findmitoscaf only.
+fq_size = 5
+
 ########################
 # Filter arguments
 
@@ -373,6 +388,11 @@ fastq_quality_shift =
 # read length of fastq reads, used by SOAPTrans and bwa.
 # It must be >= 71 bp
 fastq_read_length = 150
+
+# use only part (# Gbp) of the input fastq file in the
+# analysis. By default, all data will be used.
+# Support for all, all2, filter, assemble and findmitoscaf only.
+fq_size = 5
 
 ######################
 # Assembly arguments
@@ -480,6 +500,12 @@ fastq_quality_shift =
 # read length of fastq reads, used by SOAPTrans and bwa.
 # It must be >= 71 bp
 fastq_read_length = 150
+
+# use only part (# Gbp) of the input fastq file in the
+# analysis. By default, all data will be used.
+# Support for all, all2, filter, assemble and findmitoscaf only.
+fq_size = 5
+
 
 ######################
 # Search mitochondrial sequences arguments

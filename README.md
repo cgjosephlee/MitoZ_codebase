@@ -164,7 +164,7 @@ For more details, please refer to `python3 MitoZ.py all -h`
 ## 6.3 directory structure
 
     example
-        ├── tmp
+        ├── ZZZ.tmp
         │   ├── ZZZ.annotation
         │   ├── ZZZ.assembly
         │   └── ZZZ.cleandata
@@ -639,9 +639,23 @@ use the script `useful_scripts/gbseqextractor_v2.py`.
 	  -F                    only output full length genes [False]
 
 
+## 15.4 Dispatch same genes of different samples into same files
+
+
+    usage: same_gene_to_same_file.py [-h] [-r <file>] [-d <str>] [-p <str>]
+
+    To dispatch the same genes of different samples into same files.
+
+    optional arguments:
+      -h, --help  show this help message and exit
+      -r <file>   the gene file list. Per-line format: Abbreviation geneFilePath.
+                  The abbreviation will be added to the seqid to indicate
+                  different samples.
+      -d <str>    the delimiter between the abbreviation and the seqid [;]
+      -p <str>    the prefix of all result files [MitoZ]
 
 # Citation
 
-    Guanliang Meng, Yiyuan Li, Chentao Yang, Shanlin Liu. MitoZ: A toolkit for mitochondrial genome assembly, annotation and visualization; doi: https://doi.org/10.1101/489955
+    Guanliang Meng, Yiyuan Li, Chentao Yang, Shanlin Liu, MitoZ: a toolkit for animal mitochondrial genome assembly, annotation and visualization, Nucleic Acids Research, , gkz173, https://doi.org/10.1093/nar/gkz173
 
 
