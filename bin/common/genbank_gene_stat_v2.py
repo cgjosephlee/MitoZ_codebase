@@ -75,8 +75,7 @@ def gene_stat(gbfile=None):
             start = fea.location.start
             start = to_1_leftmost(start)
 
-            end = fea.location.end
-            end = to_1_leftmost(end)
+            end = str(fea.location.end)
 
             strand = fea.location.strand  # is a number
             if strand == 1:
